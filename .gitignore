@@ -1,0 +1,21 @@
+# Build outputs & compiled binaries
+DualWanApp/bin/
+*.exe
+*.ico
+*.pdb
+*.obj
+
+# Local machine state & backups
+dual-wan-backup.json
+config.json
+tcp-tweaks-backup.json
+
+# Editors & OS artifacts
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+Thumbs.db
+Desktop.ini
+*.log

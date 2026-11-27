@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DualWAN Speed &amp; Gaming Balancer — by Omkar Waghmare</title>
+  <meta name="description" content="Open-source Windows 10/11 Dual-WAN Ethernet + Wi-Fi speed aggregator, live taskbar speed &amp; ping bar, automatic game detection, and Game Split router by Omkar Waghmare." />
+  <style>
+    :root {
+      --bg: #0b1120;
+      --surface: #131c31;
+      --surface-2: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --emerald: #10b981;
+      --cyan: #38bdf8;
+      --rose: #f43f5e;
+      --blue: #3b82f6;
+      --amber: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: radial-gradient(circle at 20% 0%, rgba(16,185,129,0.12), transparent 45%),
+                  radial-gradient(circle at 85% 15%, rgba(56,189,248,0.10), transparent 40%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(12px);
+      background: rgba(11, 17, 32, 0.85);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; color: #fff; }
+    .brand-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald), var(--cyan));
+      box-shadow: 0 0 12px rgba(16,185,129,0.7);
+    }
+    .nav-links { display: flex; gap: 22px; font-size: 0.92rem; }
+    .nav-links a { color: var(--muted); font-weight: 500; }
+    .nav-links a:hover { color: #fff; text-decoration: none; }
+
+    /* Hero */
+    .hero { padding: 68px 0 46px; text-align: center; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.35);
+      color: #6ee7b7; font-size: 0.84rem; font-weight: 600;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: clamp(2.1rem, 4.2vw, 3.25rem);
+      font-weight: 800; letter-spacing: -0.025em;
+      line-height: 1.15; margin-bottom: 16px;
+    }
+    .grad {
+      background: linear-gradient(90deg, #34d399, #38bdf8, #fb7185);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      max-width: 720px; margin: 0 auto 28px;
+      color: var(--muted); font-size: 1.08rem;
+    }
+    .cta-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-bottom: 26px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 10px; font-weight: 700; font-size: 0.95rem;
+      border: 1px solid transparent; cursor: pointer; transition: transform .15s, filter .15s;
+    }
+    .btn:hover { transform: translateY(-1px); text-decoration: none; filter: brightness(1.08); }
+    .btn-primary { background: linear-gradient(135deg, #059669, #10b981); color: #fff; }
+    .btn-secondary { background: var(--surface-2); border-color: var(--border); color: var(--text); }
+    .speedbar-preview {
+      display: inline-flex; flex-direction: column; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 12px 16px; border-radius: 12px;
+    }
+    .speedbar-preview img { border-radius: 6px; max-width: 100%; height: auto; }
+    .speedbar-caption { font-size: 0.78rem; color: var(--muted); }
+
+    /* Showcase Tabs */
+    .section { padding: 48px 0; }
+    .section-title { font-size: 1.65rem; font-weight: 700; margin-bottom: 8px; }
+    .section-sub { color: var(--muted); margin-bottom: 26px; }
+    .showcase-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+    .tab-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+    .tab-btn {
+      background: var(--surface-2); color: var(--muted);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 16px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    }
+    .tab-btn.active {
+      background: rgba(16,185,129,0.18);
+      border-color: var(--emerald); color: #fff;
+    }
+    .tab-panel { display: none; text-align: center; }
+    .tab-panel.active { display: block; }
+    .tab-panel img {
+      max-width: 100%; height: auto; border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    /* Feature Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 22px;
+    }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 6px;
+      font-size: 0.74rem; font-weight: 700; margin-bottom: 10px;
+    }
+    .b-eth { background: rgba(59,130,246,0.18); color: #93c5fd; }
+    .b-game { background: rgba(244,63,94,0.18); color: #fda4af; }
+    .b-ping { background: rgba(16,185,129,0.18); color: #6ee7b7; }
+    .b-cli { background: rgba(56,189,248,0.18); color: #7dd3fc; }
+    .card h3 { font-size: 1.08rem; margin-bottom: 8px; }
+    .card p { color: var(--muted); font-size: 0.92rem; }
+
+    /* Code Blocks */
+    pre {
+      background: #060a14; border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px; overflow-x: auto;
+      font-family: Consolas, "Cascadia Code", monospace; font-size: 0.86rem;
+      color: #e2e8f0; margin-top: 12px;
+    }
+
+    /* Mode Table */
+    table {
+      width: 100%; border-collapse: collapse; margin-top: 14px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    th { background: var(--surface-2); color: #fff; font-weight: 700; }
+    td { color: var(--muted); }
+    td strong { color: var(--text); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0; margin-top: 40px;
+      color: var(--muted); font-size: 0.9rem;
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span>DualWAN Speed &amp; Gaming Balancer</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#preview">UI Preview</a>
+        <a href="#features">Features</a>
+        <a href="#modes">Modes</a>
+        <a href="#install">Build &amp; Use</a>
+        <a href="https://github.com/omkarwaghmare-1/DualWAN-Speed-Gaming-Balancer" id="nav-repo-link">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="pill">Open Source &bull; Windows 10 / 11 (x64) &bull; MIT License</div>
+      <h1>Combine <span class="grad">Ethernet + Wi-Fi</span> Speed.<br />Keep Games Locked on Low Ping.</h1>
+      <p>
+        A native, zero-dependency Windows GUI app, floating bottom-right speed &amp; ping bar,
+        and CLI toolkit that balances multi-connection downloads &amp; uploads across both links
+        and automatically isolates gaming traffic onto low-latency Ethernet.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/omkarwaghmare-1/DualWAN-Speed-Gaming-Balancer/releases/latest/download/DualWanBalancer.exe">Download DualWanBalancer.exe</a>
+        <a class="btn btn-secondary" href="https://github.com/omkarwaghmare-1/DualWAN-Speed-Gaming-Balancer">View Source on GitHub</a>
+      </div>
+      <div class="speedbar-preview">
+        <img src="assets/speed-bar.png" alt="Floating bottom-right live speed and ping bar" />
+        <span class="speedbar-caption">Live bottom-right floating speed &amp; ping bar (clicks open the full panel)</span>
+      </div>
+    </section>
+
+    <section id="preview" class="section">
+      <h2 class="section-title">Implemented Windows UI</h2>
+      <p class="section-sub">Captured directly from the compiled <code>DualWanBalancer.exe</code> (.NET Framework 4.x WinForms).</p>
+      <div class="showcase-card">
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="showTab('dash', this)">Dashboard (Speed &amp; Links)</button>
+          <button class="tab-btn" onclick="showTab('game', this)">Game Boost, Ping &amp; Stability</button>
+          <button class="tab-btn" onclick="showTab('bar', this)">Floating Bottom Speed Bar</button>
+        </div>
+        <div id="tab-dash" class="tab-panel active">
+          <img src="assets/dashboard.png" alt="DualWAN Dashboard UI" />
+        </div>
+        <div id="tab-game" class="tab-panel">
+          <img src="assets/game-boost.png" alt="Game Boost, Ping and Stability Tab UI" />
+        </div>
+        <div id="tab-bar" class="tab-panel">
+          <img src="assets/speed-bar.png" alt="Bottom-right Speed and Ping Bar" style="margin: 30px auto;" />
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <h2 class="section-title">Core Capabilities</h2>
+      <p class="section-sub">Engineered specifically around Windows Strong-Host networking and real-world Dual-WAN routing.</p>
+      <div class="grid">
+        <div class="card">
+          <span class="badge b-ping">LOAD BALANCING</span>
+          <h3>Multi-Connection Aggregation</h3>
+          <p>Runs a local HTTP/HTTPS <code>CONNECT</code> &amp; SOCKS5 proxy binding outbound sockets across both Ethernet and Wi-Fi with Least-Busy, Weighted Round-Robin, and Lowest-Ping strategies.</p>
+        </div>
+        <div class="card">
+          <span class="badge b-game">GAME SPLIT MODE</span>
+          <h3>Games on Cable, Downloads on Wi-Fi</h3>
+          <p>Detects 55+ PC games (plus custom <code>.exe</code> apps &amp; Fullscreen+UDP heuristics), prioritizes Ethernet (Metric 10) for direct game sockets, and isolates browser/IDM downloads onto Wi-Fi.</p>
+        </div>
+        <div class="card">
+          <span class="badge b-eth">LATENCY MONITOR</span>
+          <h3>Per-Link Ping, Jitter &amp; Loss</h3>
+          <p>Measures RTT independently out of Ethernet and Wi-Fi every 3 seconds via Win32 <code>IcmpSendEcho2Ex</code> (with <code>TCP:443</code> fallback) and fails over automatically if a link degrades.</p>
+        </div>
+        <div class="card">
+          <span class="badge b-ping">STABILITY</span>
+          <h3>Sticky Host Affinity &amp; Safe Recovery</h3>
+          <p>Pins login &amp; game launcher domains to one uplink (5-min TTL) to prevent disconnects, and cleanly backs up &amp; restores Windows System Proxy settings on exit or power loss.</p>
+        </div>
+        <div class="card">
+          <span class="badge b-game">LOW LATENCY</span>
+          <h3>Reversible Windows TCP Tweaks</h3>
+          <p>Optional one-click Admin optimization disabling Nagle's algorithm (<code>TcpAckFrequency=1</code>, <code>TCPNoDelay=1</code>) and multimedia throttling, with JSON backup and 1-click revert.</p>
+        </div>
+        <div class="card">
+          <span class="badge b-cli">CLI INCLUDED</span>
+          <h3>PowerShell &amp; Node.js Tools</h3>
+          <p>Includes <code>dual-wan-manager.ps1</code> (Status, Proxy, EqualMetrics, Restore) and zero-dependency <code>dual-wan-proxy.js</code> for headless or scripted workflows.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="modes" class="section">
+      <h2 class="section-title">Connection Modes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Mode</th>
+            <th>Proxy / Browser / Downloads</th>
+            <th>Games / Direct OS Sockets</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Combined</strong></td>
+            <td>Balances Ethernet + Wi-Fi</td>
+            <td>Ethernet (when Metric 10 &lt; 50)</td>
+            <td>Max multi-part downloads, uploads &amp; surfing</td>
+          </tr>
+          <tr>
+            <td><strong>Game Split</strong></td>
+            <td>Isolated to Wi-Fi</td>
+            <td>Ethernet (lowest latency cable)</td>
+            <td>Gaming while browsers/downloads run in background</td>
+          </tr>
+          <tr>
+            <td><strong>Only Ethernet</strong></td>
+            <td>Ethernet only</td>
+            <td>Ethernet only</td>
+            <td>Strict wired-only stability</td>
+          </tr>
+          <tr>
+            <td><strong>Only Wi-Fi</strong></td>
+            <td>Wi-Fi only</td>
+            <td>Wi-Fi (when OS metrics applied)</td>
+            <td>Using Wi-Fi exclusively</td>
+          </tr>
+          <tr>
+            <td><strong>Direct (Pause)</strong></td>
+            <td>Bypassed (Proxy restored)</td>
+            <td>Windows default routing</td>
+            <td>Troubleshooting or raw OS default</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="install" class="section">
+      <h2 class="section-title">Quick Build &amp; Usage (Windows 10 / 11)</h2>
+      <p class="section-sub">Compile directly with the built-in Windows <code>csc.exe</code> compiler — no Visual Studio or NuGet needed.</p>
+      <div class="card">
+<pre># 1. Clone or download this repository, then build DualWanBalancer.exe:
+powershell -NoProfile -ExecutionPolicy Bypass -File .\DualWanApp\build.ps1
+
+# 2. Launch the GUI (or copy DualWanApp\bin\DualWanBalancer.exe to Desktop):
+Start-Process .\DualWanApp\bin\DualWanBalancer.exe
+
+# 3. Optional (once as Admin, or click "Apply OS Metrics (Admin)" inside the app):
+#    Prioritize Ethernet (Metric 10) over Wi-Fi (Metric 50) so Games always take Ethernet:
+Set-NetIPInterface -InterfaceAlias "Ethernet" -AddressFamily IPv4 -AutomaticMetric Disabled -InterfaceMetric 10
+Set-NetIPInterface -InterfaceAlias "Wi-Fi"    -AddressFamily IPv4 -AutomaticMetric Disabled -InterfaceMetric 50</pre>
+      </div>
+    </section>
+
+    <footer>
+      <div>Built by <strong>Omkar Waghmare</strong> &bull; Open Source under the <a href="https://github.com/omkarwaghmare-1/DualWAN-Speed-Gaming-Balancer/blob/main/LICENSE">MIT License</a></div>
+      <div>Windows 10 / 11 (x64) &bull; .NET Framework 4.x + PowerShell + Node.js</div>
+    </footer>
+  </main>
+
+  <script>
+    function showTab(id, btn) {
+      var panels = document.querySelectorAll('.tab-panel');
+      var buttons = document.querySelectorAll('.tab-btn');
+      for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+      for (var j = 0; j < buttons.length; j++) buttons[j].classList.remove('active');
+      document.getElementById('tab-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Automatically point the top-right GitHub link at the hosted repository when on *.github.io
+    (function () {
+      var host = window.location.hostname || '';
+      if (host.endsWith('.github.io')) {
+        var user = host.split('.')[0];
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        if (parts.length > 0) {
+          document.getElementById('nav-repo-link').href = 'https://github.com/' + user + '/' + parts[0];
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

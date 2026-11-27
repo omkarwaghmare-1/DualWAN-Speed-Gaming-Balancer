@@ -1,0 +1,66 @@
+name: Build & Release Windows Dual-WAN App
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build DualWanBalancer.exe via built-in csc.exe
+        shell: powershell
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\DualWanApp\build.ps1
+
+      - name: Run Assembly & PowerShell Sanity Checks
+        shell: powershell
+        run: |
+          $errors = $null
+          [void][System.Management.Automation.Language.Parser]::ParseFile('.\dual-wan-manager.ps1', [ref]$null, [ref]$errors)
+          if ($errors) { $errors; exit 1 }
+
+          $vi = [System.Diagnostics.FileVersionInfo]::GetVersionInfo((Resolve-Path '.\DualWanApp\bin\DualWanBalancer.exe').Path)
+          if ($vi.CompanyName -ne 'Omkar Waghmare') { throw "Unexpected CompanyName: $($vi.CompanyName)" }
+
+          $asm = [Reflection.Assembly]::LoadFrom((Resolve-Path '.\DualWanApp\bin\DualWanBalancer.exe').Path)
+          $engine = New-Object DualWanBalancer.DualWanProxyEngine
+          $u1 = New-Object DualWanBalancer.UplinkEndpoint
+          $u1.Label = 'Ethernet'; $u1.LocalAddress = [System.Net.IPAddress]::Parse('192.168.0.10'); $u1.Weight = 1
+          $u2 = New-Object DualWanBalancer.UplinkEndpoint
+          $u2.Label = 'Wi-Fi'; $u2.LocalAddress = [System.Net.IPAddress]::Parse('192.168.1.20'); $u2.Weight = 2
+          $list = New-Object 'System.Collections.Generic.List[DualWanBalancer.UplinkEndpoint]'
+          $list.Add($u1); $list.Add($u2)
+          $engine.Configure($list, [DualWanBalancer.BalanceStrategy]::LowestPing, 0, 0, $true, $true)
+          $engine.UpdateUplinkHealth('Ethernet', 12, 1, 0, $false)
+          $engine.UpdateUplinkHealth('Wi-Fi', 40, 5, 0, $false)
+          if ($engine.GetOrderedCandidates('example.com')[0].Label -ne 'Ethernet') { throw 'Scheduler check failed' }
+          $engine.Dispose()
+
+      - name: Verify Node.js Proxy CLI
+        shell: pwsh
+        run: |
+          node .\dual-wan-proxy.js --help
+
+      - name: Upload DualWanBalancer.exe Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DualWanBalancer-win-x64
+          path: DualWanApp/bin/DualWanBalancer.exe
+
+      - name: Create GitHub Release for version tags
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: DualWanApp/bin/DualWanBalancer.exe
+          generate_release_notes: true
