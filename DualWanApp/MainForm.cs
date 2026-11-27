@@ -70,7 +70,7 @@ namespace DualWanBalancer
 
         private void InitializeLayout()
         {
-            Text = "DualWAN Speed & Gaming Balancer";
+            Text = "DualNetwork Speed in Single Router with Gaming Balancer";
             Size = new Size(786, 650);
             MinimumSize = new Size(760, 620);
             FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -88,16 +88,16 @@ namespace DualWanBalancer
             Controls.Add(header);
 
             Label title = new Label();
-            title.Text = "DualWAN Speed & Gaming Balancer";
+            title.Text = "DualNetwork Speed in Single Router with Gaming Balancer";
             title.UseMnemonic = false;
-            title.Font = new Font("Segoe UI", 14f, FontStyle.Bold);
+            title.Font = new Font("Segoe UI", 11.5f, FontStyle.Bold);
             title.ForeColor = Color.White;
             title.AutoSize = true;
-            title.Location = new Point(20, 10);
+            title.Location = new Point(20, 11);
             header.Controls.Add(title);
 
             Label sub = new Label();
-            sub.Text = "Dual-link speed aggregation, game detection & ping stability  |  by Omkar Waghmare";
+            sub.Text = "AI-Built Application  |  Ethernet + Wi-Fi Aggregation & Game Split  |  by Omkar Waghmare";
             sub.UseMnemonic = false;
             sub.Font = new Font("Segoe UI", 8.5f);
             sub.ForeColor = Color.FromArgb(148, 163, 184);

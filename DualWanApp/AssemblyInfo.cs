@@ -1,11 +1,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("DualWAN Speed & Gaming Balancer")]
-[assembly: AssemblyDescription("Windows Dual-WAN Ethernet + Wi-Fi Load Balancer, Game Split Router & Ping Monitor")]
+[assembly: AssemblyTitle("DualNetwork Speed in Single Router with Gaming Balancer")]
+[assembly: AssemblyDescription("AI-Built Windows DualNetwork Ethernet + Wi-Fi Load Balancer, Game Split Router & Ping Monitor")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Omkar Waghmare")]
-[assembly: AssemblyProduct("DualWAN Speed & Gaming Balancer")]
+[assembly: AssemblyProduct("DualNetwork Speed in Single Router with Gaming Balancer")]
 [assembly: AssemblyCopyright("Copyright © 2026 Omkar Waghmare")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

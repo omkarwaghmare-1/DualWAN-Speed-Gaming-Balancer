@@ -1,12 +1,15 @@
-# DualWAN Speed & Gaming Balancer
+# DualNetwork Speed in Single Router with Gaming Balancer
 
+> **AI-Built Application** • Open Source for Windows 10 / 11 (x64) • Author: **Omkar Waghmare**
+
+[![AI-Built Application](https://img.shields.io/badge/App-AI--Built%20Application-8B5CF6?style=flat-square)](https://github.com/omkarwaghmare-1/DualWAN-Speed-Gaming-Balancer)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(x64)-0078D6?style=flat-square&logo=windows)](https://github.com/omkarwaghmare-1/DualWAN-Speed-Gaming-Balancer/releases/latest)
 [![Runtime](https://img.shields.io/badge/.NET%20Framework-4.x%20(Built--in)-512BD4?style=flat-square)](https://github.com/omkarwaghmare-1/DualWAN-Speed-Gaming-Balancer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=flat-square)](LICENSE)
 [![Author](https://img.shields.io/badge/Author-Omkar%20Waghmare-F43F5E?style=flat-square)](https://github.com/omkarwaghmare-1)
 [![Website](https://img.shields.io/badge/GitHub%20Pages-Live%20UI-38BDF8?style=flat-square)](https://omkarwaghmare-1.github.io/DualWAN-Speed-Gaming-Balancer/)
 
-An open-source Windows Dual-WAN manager and load-balancing suite designed for PCs connected to **both Ethernet and Wi-Fi simultaneously** — featuring a native desktop GUI + floating bottom-right Speed & Ping Bar (`DualWanBalancer.exe`), automatic game detection with **Game Split** traffic isolation, real-time per-link latency monitoring, and optional PowerShell/Node.js CLI tools.
+**DualNetwork Speed in Single Router with Gaming Balancer** is an **AI-built open-source Windows application** designed for PCs connected to **both Ethernet and Wi-Fi simultaneously** (including setups with a 100 Mbps secondary router and Wi-Fi connected back to a main router, or dual routers/ISPs) — featuring a native desktop GUI + floating bottom-right Speed & Ping Bar (`DualWanBalancer.exe`), automatic game detection with **Game Split** traffic isolation, real-time per-link latency monitoring, and optional PowerShell/Node.js CLI tools.
 
 > **Project Website & UI Showcase:** https://omkarwaghmare-1.github.io/DualWAN-Speed-Gaming-Balancer/  
 > **Download Windows App:** [DualWanBalancer.exe (Latest Release)](https://github.com/omkarwaghmare-1/DualWAN-Speed-Gaming-Balancer/releases/latest/download/DualWanBalancer.exe)
